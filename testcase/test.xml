@@ -1,0 +1,40 @@
+<loadTestList startRandomizationTime="5000">
+  <loadTestCase name="user01" useJavascript="false">
+     <initialUrl>https://www.example.com/login/alert</initialUrl>
+     <steps class="java.util.ArrayList">
+        <loadTestStep class="org.freemedsoftware.util.loadtest.step.LoadTestForm" formName="LoginBean" stripSession="true">
+           <value key="uid">user01</value>
+           <value key="pswd">password01</value>
+           <submitButton>Log in</submitButton>
+           <successString>user01</successString>
+        </loadTestStep>
+        <loadTestStep class="org.freemedsoftware.util.loadtest.step.LoadTestLink">
+           <regex>.*Execute.*</regex>
+           <successString>Successful</successString>
+        </loadTestStep>
+        <loadTestStep class="org.freemedsoftware.util.loadtest.step.LoadTestLink">
+           <regex>logout.do</regex>
+           <successString>loginRedirect</successString>
+        </loadTestStep>
+     </steps>
+  </loadTestCase>
+  <loadTestCase name="user02" useJavascript="false">
+     <initialUrl>https://www.example.com/login/alert</initialUrl>
+     <steps class="java.util.ArrayList">
+        <loadTestStep class="org.freemedsoftware.util.loadtest.step.LoadTestForm" formName="LoginBean" stripSession="true">
+	   <value key="uid">user02</value>
+           <value key="pswd">password01</value>
+           <submitButton>Log in</submitButton>
+           <successString>user02</successString>
+        </loadTestStep>
+        <loadTestStep class="org.freemedsoftware.util.loadtest.step.LoadTestLink">
+           <regex>.*Execute.*</regex>
+           <successString>Successful</successString>
+        </loadTestStep>
+        <loadTestStep class="org.freemedsoftware.util.loadtest.step.LoadTestLink">
+           <regex>logout.do</regex>
+           <successString>loginRedirect</successString>
+        </loadTestStep>
+     </steps>
+  </loadTestCase>
+</loadTestList>
