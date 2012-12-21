@@ -77,8 +77,8 @@ public class LoadTestThread implements Serializable, Runnable {
 		try {
 			log.info("Found " + testCase.getSteps().size() + " test steps");
 			for (LoadTestStep step : testCase.getSteps()) {
-				long randomizedWaitTime = (long) (Math.random() * 2000L);
-				log.info("Waiting for randomized < 2000ms time (" + randomizedWaitTime + "ms)");
+				long randomizedWaitTime = step.getWaitTime() + (long) (Math.random() * 2000L);
+				log.info("Waiting for randomized time (" + randomizedWaitTime + "ms)");
 				Thread.sleep(randomizedWaitTime);
 				statisticsObject.addToIdleWaitTime(randomizedWaitTime);
 

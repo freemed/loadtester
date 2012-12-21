@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.freemedsoftware.util.loadtest.LoadTestStep;
 
 import org.apache.log4j.Logger;
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -28,6 +29,17 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 
 	@Element
 	private String successString = "";
+
+	@Attribute(required = false)
+	private long waitTime = 2000L;
+
+	public long getWaitTime() {
+		return waitTime;
+	}
+
+	public void setWaitTime(long waitTime) {
+		this.waitTime = waitTime;
+	}
 
 	public void setRegex(String regex) {
 		this.regex = regex;

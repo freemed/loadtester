@@ -43,9 +43,20 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 	@Element(required = false)
 	private String linkSubmit = "";
 
+	@Attribute(required = false)
+	private long waitTime = 2000L;
+	
 	@Attribute
 	private boolean stripSession = false;
 
+	public long getWaitTime() {
+		return waitTime;
+	}
+	
+	public void setWaitTime(long waitTime) {
+		this.waitTime = waitTime;
+	}
+	
 	public void setFormName(String formName) {
 		this.formName = formName;
 	}

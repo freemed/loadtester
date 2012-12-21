@@ -8,5 +8,7 @@ public interface LoadTestStep {
 	public HtmlPage run(WebClient client, HtmlPage page) throws Exception;
 	
 	public boolean checkOutput(HtmlPage resultPage);
+	
+	public long getWaitTime();
 
 }
