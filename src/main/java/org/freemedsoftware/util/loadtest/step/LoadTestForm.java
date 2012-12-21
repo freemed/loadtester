@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.freemedsoftware.util.loadtest.LoadTestStep;
+import org.freemedsoftware.util.loadtest.LoadTester;
 
 import org.apache.log4j.Logger;
 import org.simpleframework.xml.Attribute;
@@ -14,6 +15,7 @@ import org.simpleframework.xml.Root;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -32,11 +34,14 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 	@ElementMap(name = "values", entry = "value", key = "key", attribute = true, inline = true)
 	private Map<String, String> values = new HashMap<String, String>();
 
-	@Element
+	@Element(required = false)
 	private String submitButton = "";
 
 	@Element
 	private String successString = "";
+
+	@Element(required = false)
+	private String linkSubmit = "";
 
 	@Attribute
 	private boolean stripSession = false;
@@ -85,13 +90,25 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 		return stripSession;
 	}
 
+	public void setLinkSubmit(String linkSubmit) {
+		this.linkSubmit = linkSubmit;
+	}
+
+	public String getLinkSubmit() {
+		return linkSubmit;
+	}
+
 	public HtmlPage run(WebClient client, HtmlPage page) throws Exception {
 		HtmlForm form = null;
 		try {
 			form = page.getFormByName(getFormName());
 		} catch (ElementNotFoundException e) {
-			log.warn("Using first form on page, couldn't get " + getFormName());
-			form = page.getForms().get(0);
+			try {
+				form = (HtmlForm) page.getElementById(getFormName());
+			} catch (Exception e2) {
+				log.warn("Using first form on page, couldn't get " + getFormName());
+				form = page.getForms().get(0);
+			}
 		}
 
 		if (form.getActionAttribute().contains(";jsessionid") && isStripSession()) {
@@ -105,17 +122,36 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 			HtmlInput i = form.getInputByName(k);
 			i.setValueAttribute(v);
 		}
-		HtmlSubmitInput button = null;
-		try {
-			button = form.getInputByName(getSubmitButton());
-		} catch (ElementNotFoundException e) {
-			button = form.getInputByValue(getSubmitButton());
+		if (getLinkSubmit().isEmpty()) {
+			HtmlSubmitInput button = null;
+			try {
+				button = form.getInputByName(getSubmitButton());
+			} catch (ElementNotFoundException e) {
+				button = form.getInputByValue(getSubmitButton());
+			}
+			return button.click();
+		} else {
+			log.debug("Iterating for link with text " + getLinkSubmit());
+			for (HtmlAnchor a : page.getAnchors()) {
+				if (a.getTextContent().contentEquals(getLinkSubmit())
+						|| a.getId().contentEquals(getLinkSubmit())) {
+					return a.click();
+				}
+			}
+			log.debug("Could not find link with text or id " + getLinkSubmit());
+			if (LoadTester.DEBUG) {
+				//log.debug(page.asText());
+			}
+			throw new Exception("Could not find link with text or id " + getLinkSubmit());
 		}
-		return button.click();
 	}
 
 	public boolean checkOutput(HtmlPage resultPage) {
 		if (resultPage.getWebResponse().getContentAsString().contains(getSuccessString())) {
+			log.debug("Could not find link with text or id " + getLinkSubmit());
+			if (LoadTester.DEBUG) {
+				log.debug(resultPage.getWebResponse().getContentAsString());
+			}
 			return true;
 		} else {
 			return false;

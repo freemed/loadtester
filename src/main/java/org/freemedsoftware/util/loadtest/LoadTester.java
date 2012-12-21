@@ -10,12 +10,15 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 public class LoadTester {
+
+	public static boolean DEBUG = false;
 
 	/**
 	 * @param args
@@ -32,6 +35,7 @@ public class LoadTester {
 		// create Options object
 		Options options = new Options();
 		options.addOption("c", "count", true, "test thread count");
+		options.addOption("d", "debug", false, "verbosely show fail pages");
 		options.addOption("o", "output", true, "output stats report as file");
 		options.addOption("r", "repeat", true, "repeat load test (default is 1)");
 		options.addOption("t", "testcase", true, "test case definition");
@@ -49,6 +53,10 @@ public class LoadTester {
 
 		Integer loopCount = Integer.parseInt(cmd.getOptionValue("r", "1"));
 		Integer testCount = Integer.parseInt(cmd.getOptionValue("c", "1"));
+		DEBUG = cmd.hasOption("d");
+		if (DEBUG) {
+			log.setLevel(Level.DEBUG);
+		}
 
 		Serializer serializer = new Persister();
 		File source = new File(cmd.hasOption("t") ? cmd.getOptionValue("t") : "testcase/test.xml");
@@ -70,8 +78,8 @@ public class LoadTester {
 		log.info("Using " + randomizationTime + " as maximum initial delay");
 
 		for (int loopCounter = 0; loopCounter < loopCount; loopCounter++) {
-			log.info("Beginning loop count #" + loopCounter);			
-			
+			log.info("Beginning loop count #" + loopCounter);
+
 			for (int count = 0; count < testCount; count++) {
 				log.info("Starting thread #" + count);
 				LoadTestThread runnable = new LoadTestThread();

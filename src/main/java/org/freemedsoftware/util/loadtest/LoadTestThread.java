@@ -93,7 +93,9 @@ public class LoadTestThread implements Serializable, Runnable {
 						+ (stepTimerEnd - stepTimerBegin) + "ms]");
 				statisticsObject.addToProcessingTime(stepTimerEnd - stepTimerBegin);
 
-				// System.out.println(currentPage.getWebResponse().getContentAsString());
+				if (LoadTester.DEBUG) {
+					System.out.println(currentPage.getWebResponse().getContentAsString());
+				}
 				if (!step.checkOutput(currentPage)) {
 					statisticsObject.setFinished(true);
 					statisticsObject.setSuccessful(false);
