@@ -14,9 +14,6 @@ public class LoadTestStepStatistics implements Serializable {
 	private String stepName = "";
 
 	@Attribute
-	private boolean finished = false;
-
-	@Attribute
 	private boolean successful = false;
 
 	@Attribute
@@ -26,14 +23,6 @@ public class LoadTestStepStatistics implements Serializable {
 	private long threadId = 0L;
 
 	private LoadTestStep testStep = null;
-
-	public void setFinished(boolean finished) {
-		this.finished = finished;
-	}
-
-	public boolean isFinished() {
-		return finished;
-	}
 
 	public void setSuccessful(boolean successful) {
 		this.successful = successful;
