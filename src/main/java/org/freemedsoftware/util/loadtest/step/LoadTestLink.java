@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.freemedsoftware.util.loadtest.LoadTestStep;
+import org.freemedsoftware.util.loadtest.LoadTestStepStatistics;
 
 import org.apache.log4j.Logger;
 import org.simpleframework.xml.Attribute;
@@ -24,6 +25,9 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 
 	private static Logger log = Logger.getLogger(LoadTestLink.class);
 
+	@Attribute(required = false)
+	private String stepName = "";
+
 	@Element
 	private String regex = "";
 
@@ -32,6 +36,16 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 
 	@Attribute(required = false)
 	private long waitTime = 2000L;
+
+	private LoadTestStepStatistics stepStatistics = new LoadTestStepStatistics();
+
+	public String getStepName() {
+		return stepName;
+	}
+
+	public void setStepName(String stepName) {
+		this.stepName = stepName;
+	}
 
 	public long getWaitTime() {
 		return waitTime;
@@ -57,7 +71,13 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 		return successString;
 	}
 
+	public LoadTestStepStatistics getStepStatistics() {
+		return stepStatistics;
+	}
+
 	public HtmlPage run(WebClient client, HtmlPage page) throws Exception {
+		stepStatistics.setTestStep(this);
+
 		Pattern pattern = Pattern.compile(getRegex());
 		List<HtmlAnchor> aElements = page.getAnchors();
 		List<HtmlAnchor> matches = new ArrayList<HtmlAnchor>();
@@ -72,7 +92,13 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 		log.debug("Found " + matches.size() + " link matches");
 		HtmlAnchor a = matches.get((int) (Math.random() * matches.size()));
 		log.info("Clicking on anchor URL " + a.getHrefAttribute());
-		return a.click();
+
+		long begin = System.currentTimeMillis();
+		HtmlPage next = a.click();
+		long end = System.currentTimeMillis();
+		stepStatistics.setProcessingTime(end - begin);
+		stepStatistics.setSuccessful(true);
+		return next;
 	}
 
 	public boolean checkOutput(HtmlPage resultPage) {

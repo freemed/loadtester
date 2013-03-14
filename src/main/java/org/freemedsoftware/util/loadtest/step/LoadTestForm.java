@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.freemedsoftware.util.loadtest.LoadTestStep;
+import org.freemedsoftware.util.loadtest.LoadTestStepStatistics;
 import org.freemedsoftware.util.loadtest.LoadTester;
 
 import org.apache.log4j.Logger;
@@ -28,6 +29,9 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 
 	private static Logger log = Logger.getLogger(LoadTestForm.class);
 
+	@Attribute(required = false)
+	private String stepName = "";
+
 	@Attribute
 	private String formName = "";
 
@@ -45,18 +49,28 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 
 	@Attribute(required = false)
 	private long waitTime = 2000L;
-	
+
 	@Attribute
 	private boolean stripSession = false;
+
+	private LoadTestStepStatistics stepStatistics = new LoadTestStepStatistics();
+
+	public String getStepName() {
+		return stepName;
+	}
+
+	public void setStepName(String stepName) {
+		this.stepName = stepName;
+	}
 
 	public long getWaitTime() {
 		return waitTime;
 	}
-	
+
 	public void setWaitTime(long waitTime) {
 		this.waitTime = waitTime;
 	}
-	
+
 	public void setFormName(String formName) {
 		this.formName = formName;
 	}
@@ -109,7 +123,13 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 		return linkSubmit;
 	}
 
+	public LoadTestStepStatistics getStepStatistics() {
+		return stepStatistics;
+	}
+
 	public HtmlPage run(WebClient client, HtmlPage page) throws Exception {
+		stepStatistics.setTestStep(this);
+
 		HtmlForm form = null;
 		try {
 			form = page.getFormByName(getFormName());
@@ -140,18 +160,29 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 			} catch (ElementNotFoundException e) {
 				button = form.getInputByValue(getSubmitButton());
 			}
-			return button.click();
+
+			long begin = System.currentTimeMillis();
+			HtmlPage next = button.click();
+			long end = System.currentTimeMillis();
+			stepStatistics.setProcessingTime(end - begin);
+			stepStatistics.setSuccessful(true);
+			return next;
 		} else {
 			log.debug("Iterating for link with text " + getLinkSubmit());
 			for (HtmlAnchor a : page.getAnchors()) {
 				if (a.getTextContent().contentEquals(getLinkSubmit())
 						|| a.getId().contentEquals(getLinkSubmit())) {
-					return a.click();
+					long begin = System.currentTimeMillis();
+					HtmlPage next = a.click();
+					long end = System.currentTimeMillis();
+					stepStatistics.setProcessingTime(end - begin);
+					stepStatistics.setSuccessful(true);
+					return next;
 				}
 			}
 			log.debug("Could not find link with text or id " + getLinkSubmit());
 			if (LoadTester.DEBUG) {
-				//log.debug(page.asText());
+				// log.debug(page.asText());
 			}
 			throw new Exception("Could not find link with text or id " + getLinkSubmit());
 		}

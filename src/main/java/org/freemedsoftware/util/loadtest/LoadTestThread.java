@@ -1,7 +1,6 @@
 package org.freemedsoftware.util.loadtest;
 
 import java.io.Serializable;
-import java.security.GeneralSecurityException;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +25,7 @@ public class LoadTestThread implements Serializable, Runnable {
 			log.error("Null test case object presented.");
 			return;
 		}
-		
+
 		long startTime = 0L;
 		long endTime = 0L;
 
@@ -41,18 +40,13 @@ public class LoadTestThread implements Serializable, Runnable {
 			log.error(e);
 		}
 
-		WebClient client = new WebClient(BrowserVersion.FIREFOX_3_6);
-		client.setJavaScriptEnabled(testCase.isUseJavascript());
-		client.setCssEnabled(false);
+		WebClient client = new WebClient(BrowserVersion.FIREFOX_17);
+		client.getOptions().setJavaScriptEnabled(testCase.isUseJavascript());
+		client.getOptions().setCssEnabled(false);
 		CookieManager cookieManager = new CookieManager();
 		cookieManager.setCookiesEnabled(true);
 		client.setCookieManager(cookieManager);
-		try {
-			client.setUseInsecureSSL(true);
-		} catch (GeneralSecurityException e) {
-			log.error(e);
-			return;
-		}
+		client.getOptions().setUseInsecureSSL(true);
 
 		startTime = atomicStartTime = System.currentTimeMillis();
 		HtmlPage currentPage = null;
@@ -103,6 +97,7 @@ public class LoadTestThread implements Serializable, Runnable {
 				} else {
 					log.info("Test step passed");
 				}
+				statisticsObject.addStepStatistics(step.getStepStatistics());
 			}
 		} catch (Exception e) {
 			log.error(e);

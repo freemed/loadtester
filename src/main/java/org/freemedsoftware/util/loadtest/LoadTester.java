@@ -31,6 +31,7 @@ public class LoadTester {
 
 		// Set logging for htmlunit
 		System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog", "warn");
+		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.ERROR);
 
 		// create Options object
 		Options options = new Options();

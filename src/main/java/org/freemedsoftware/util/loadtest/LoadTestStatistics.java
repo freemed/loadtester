@@ -1,35 +1,40 @@
 package org.freemedsoftware.util.loadtest;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 @Root
 public class LoadTestStatistics implements Serializable {
 
 	private static final long serialVersionUID = -6459721833597952444L;
-	
+
 	@Attribute
 	private String testName = "";
-	
+
 	@Attribute
 	private boolean finished = false;
-	
+
 	@Attribute
 	private boolean successful = false;
-	
+
 	@Attribute
 	private long idleWaitTime = 0L;
-	
+
 	@Attribute
 	private long processingTime = 0L;
-	
+
 	@Attribute
 	private long threadId = 0L;
-	
+
 	@Attribute
 	private int loopCount = 0;
+
+	@ElementList
+	private ArrayList<LoadTestStepStatistics> stepStatistics = new ArrayList<LoadTestStepStatistics>();
 
 	private LoadTestCase testCase = null;
 
@@ -106,12 +111,16 @@ public class LoadTestStatistics implements Serializable {
 		return loopCount;
 	}
 
+	public void addStepStatistics(LoadTestStepStatistics ss) {
+		this.stepStatistics.add(ss);
+	}
+
 	@Override
 	public String toString() {
 		return new StringBuilder().append("LoadTestStatistics[threadId=").append(getThreadId())
-				.append(",").append("testcase=").append(
-						getTestCase() != null ? getTestCase().getName() : this.hashCode()).append(
-						",").append("processingTime=").append(getProcessingTime()).append("ms,")
+				.append(",").append("testcase=")
+				.append(getTestCase() != null ? getTestCase().getName() : this.hashCode())
+				.append(",").append("processingTime=").append(getProcessingTime()).append("ms,")
 				.append("idleWaitTime=").append(getIdleWaitTime()).append("ms]").toString();
 	}
 

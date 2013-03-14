@@ -3,6 +3,7 @@ package org.freemedsoftware.util.loadtest.step;
 import java.io.Serializable;
 
 import org.freemedsoftware.util.loadtest.LoadTestStep;
+import org.freemedsoftware.util.loadtest.LoadTestStepStatistics;
 import org.freemedsoftware.util.loadtest.LoadTester;
 
 import org.apache.log4j.Logger;
@@ -22,14 +23,27 @@ public class LoadTestAnchor implements LoadTestStep, Serializable {
 
 	private static Logger log = Logger.getLogger(LoadTestAnchor.class);
 
+	@Attribute(required = false)
+	private String stepName = "";
+
 	@Attribute
 	private String anchorName = "";
 
 	@Element
 	private String successString = "";
-
+	
 	@Attribute(required = false)
 	private long waitTime = 2000L;
+	
+	private LoadTestStepStatistics stepStatistics = new LoadTestStepStatistics();
+
+	public String getStepName() {
+		return stepName;
+	}
+	
+	public void setStepName(String stepName) {
+		this.stepName = stepName;
+	}
 
 	public long getWaitTime() {
 		return waitTime;
@@ -55,13 +69,25 @@ public class LoadTestAnchor implements LoadTestStep, Serializable {
 		return successString;
 	}
 
+	public LoadTestStepStatistics getStepStatistics() {
+		return stepStatistics;
+	}
+	
 	public HtmlPage run(WebClient client, HtmlPage page) throws Exception {
+		stepStatistics.setTestStep(this);
+
 		HtmlAnchor anchor = null;
 		try {
 			anchor = (HtmlAnchor) page.getElementById(getAnchorName());
 		} catch (ElementNotFoundException e) {
 		}
-		return anchor.click();
+
+		long begin = System.currentTimeMillis();
+		HtmlPage next = anchor.click();
+		long end = System.currentTimeMillis();
+		stepStatistics.setProcessingTime(end - begin);
+		stepStatistics.setSuccessful(true);
+		return next;
 	}
 
 	public boolean checkOutput(HtmlPage resultPage) {

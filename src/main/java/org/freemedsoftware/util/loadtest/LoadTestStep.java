@@ -10,5 +10,9 @@ public interface LoadTestStep {
 	public boolean checkOutput(HtmlPage resultPage);
 	
 	public long getWaitTime();
+	
+	public String getStepName();
+	
+	public LoadTestStepStatistics getStepStatistics();
 
 }
