@@ -165,7 +165,6 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 			HtmlPage next = button.click();
 			long end = System.currentTimeMillis();
 			stepStatistics.setProcessingTime(end - begin);
-			stepStatistics.setSuccessful(true);
 			return next;
 		} else {
 			log.debug("Iterating for link with text " + getLinkSubmit());
@@ -176,7 +175,6 @@ public class LoadTestForm implements LoadTestStep, Serializable {
 					HtmlPage next = a.click();
 					long end = System.currentTimeMillis();
 					stepStatistics.setProcessingTime(end - begin);
-					stepStatistics.setSuccessful(true);
 					return next;
 				}
 			}

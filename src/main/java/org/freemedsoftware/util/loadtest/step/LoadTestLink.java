@@ -97,7 +97,6 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 		HtmlPage next = a.click();
 		long end = System.currentTimeMillis();
 		stepStatistics.setProcessingTime(end - begin);
-		stepStatistics.setSuccessful(true);
 		return next;
 	}
 

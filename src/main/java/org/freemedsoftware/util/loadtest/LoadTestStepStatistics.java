@@ -14,23 +14,9 @@ public class LoadTestStepStatistics implements Serializable {
 	private String stepName = "";
 
 	@Attribute
-	private boolean successful = false;
-
-	@Attribute
 	private long processingTime = 0L;
 
-	@Attribute
-	private long threadId = 0L;
-
 	private LoadTestStep testStep = null;
-
-	public void setSuccessful(boolean successful) {
-		this.successful = successful;
-	}
-
-	public boolean isSuccessful() {
-		return successful;
-	}
 
 	public void setProcessingTime(long processingTime) {
 		this.processingTime = processingTime;
@@ -53,14 +39,6 @@ public class LoadTestStepStatistics implements Serializable {
 		return testStep;
 	}
 
-	public void setThreadId(long threadId) {
-		this.threadId = threadId;
-	}
-
-	public long getThreadId() {
-		return threadId;
-	}
-
 	public void setStepName(String stepName) {
 		this.stepName = stepName;
 	}
@@ -71,8 +49,7 @@ public class LoadTestStepStatistics implements Serializable {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append("LoadTestStepStatistics[threadId=").append(getThreadId())
-				.append(",").append("testcase=")
+		return new StringBuilder().append("LoadTestStepStatistics[testcase=")
 				.append(getTestStep() != null ? getTestStep().getStepName() : this.hashCode())
 				.append(",").append("processingTime=").append(getProcessingTime()).append("ms]")
 				.toString();

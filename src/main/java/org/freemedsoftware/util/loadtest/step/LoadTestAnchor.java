@@ -86,7 +86,6 @@ public class LoadTestAnchor implements LoadTestStep, Serializable {
 		HtmlPage next = anchor.click();
 		long end = System.currentTimeMillis();
 		stepStatistics.setProcessingTime(end - begin);
-		stepStatistics.setSuccessful(true);
 		return next;
 	}
 
