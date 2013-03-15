@@ -88,7 +88,7 @@ public class LoadTester {
 				runnable.setStatisticsObject(stat);
 				runnable.setStartRandomizationTime(randomizationTime);
 				LoadTestCase c = testCaseList.getCases()
-						.get(count % testCaseList.getCases().size());
+						.get(count % testCaseList.getCases().size()).clone();
 				runnable.setTestCase(c);
 				stat.setTestCase(c);
 				stat.setLoopCount(loopCounter);

@@ -75,6 +75,10 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 		return stepStatistics;
 	}
 
+	public void setStepStatistics(LoadTestStepStatistics stepStatistics) {
+		this.stepStatistics = stepStatistics;
+	}
+
 	public HtmlPage run(WebClient client, HtmlPage page) throws Exception {
 		stepStatistics.setTestStep(this);
 
@@ -106,6 +110,17 @@ public class LoadTestLink implements LoadTestStep, Serializable {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	@Override
+	public LoadTestStep clone() {
+		try {
+			final LoadTestStep result = (LoadTestStep) super.clone();
+			result.setStepStatistics((LoadTestStepStatistics) result.getStepStatistics().clone());
+			return result;
+		} catch (final CloneNotSupportedException ex) {
+			throw new AssertionError();
 		}
 	}
 

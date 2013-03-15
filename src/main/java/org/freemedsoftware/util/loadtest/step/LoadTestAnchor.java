@@ -31,16 +31,16 @@ public class LoadTestAnchor implements LoadTestStep, Serializable {
 
 	@Element
 	private String successString = "";
-	
+
 	@Attribute(required = false)
 	private long waitTime = 2000L;
-	
+
 	private LoadTestStepStatistics stepStatistics = new LoadTestStepStatistics();
 
 	public String getStepName() {
 		return stepName;
 	}
-	
+
 	public void setStepName(String stepName) {
 		this.stepName = stepName;
 	}
@@ -72,7 +72,11 @@ public class LoadTestAnchor implements LoadTestStep, Serializable {
 	public LoadTestStepStatistics getStepStatistics() {
 		return stepStatistics;
 	}
-	
+
+	public void setStepStatistics(LoadTestStepStatistics stepStatistics) {
+		this.stepStatistics = stepStatistics;
+	}
+
 	public HtmlPage run(WebClient client, HtmlPage page) throws Exception {
 		stepStatistics.setTestStep(this);
 
@@ -98,6 +102,17 @@ public class LoadTestAnchor implements LoadTestStep, Serializable {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	@Override
+	public LoadTestStep clone() {
+		try {
+			final LoadTestStep result = (LoadTestStep) super.clone();
+			result.setStepStatistics((LoadTestStepStatistics) result.getStepStatistics().clone());
+			return result;
+		} catch (final CloneNotSupportedException ex) {
+			throw new AssertionError();
 		}
 	}
 

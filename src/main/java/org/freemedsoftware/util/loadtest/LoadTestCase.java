@@ -9,7 +9,7 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 @Root
-public class LoadTestCase {
+public class LoadTestCase implements Cloneable {
 
 	@ElementList
 	private List<LoadTestStep> steps = new ArrayList<LoadTestStep>();
@@ -19,7 +19,7 @@ public class LoadTestCase {
 
 	@Attribute
 	private boolean useJavascript = false;
-	
+
 	@Attribute
 	private String name = "";
 
@@ -57,6 +57,20 @@ public class LoadTestCase {
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public LoadTestCase clone() {
+		try {
+			final LoadTestCase result = (LoadTestCase) super.clone();
+			ArrayList<LoadTestStep> a = new ArrayList<LoadTestStep>();
+			for (LoadTestStep s : getSteps()) {
+				a.add(s.clone());
+			}
+			return result;
+		} catch (final CloneNotSupportedException ex) {
+			throw new AssertionError();
+		}
 	}
 
 }

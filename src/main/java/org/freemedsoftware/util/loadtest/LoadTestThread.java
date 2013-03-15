@@ -97,7 +97,7 @@ public class LoadTestThread implements Serializable, Runnable {
 				} else {
 					log.info("Test step passed");
 				}
-				statisticsObject.addStepStatistics(step.getStepStatistics());
+				statisticsObject.addStepStatistics(step.getStepStatistics().clone());
 			}
 		} catch (Exception e) {
 			log.error(e);

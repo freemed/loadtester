@@ -6,7 +6,7 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
 
 @Root
-public class LoadTestStepStatistics implements Serializable {
+public class LoadTestStepStatistics implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = -2705905137330011844L;
 
@@ -45,6 +45,16 @@ public class LoadTestStepStatistics implements Serializable {
 
 	public String getStepName() {
 		return stepName;
+	}
+
+	@Override
+	public LoadTestStepStatistics clone() {
+		try {
+			final LoadTestStepStatistics result = (LoadTestStepStatistics) super.clone();
+			return result;
+		} catch (final CloneNotSupportedException ex) {
+			throw new AssertionError();
+		}
 	}
 
 	@Override
